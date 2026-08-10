@@ -1,1 +1,1 @@
-# simple-bigram-model
+# Statistical language bigram model
