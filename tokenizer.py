@@ -3,9 +3,10 @@ import string
 PUNCTUATION = set(string.punctuation)
 
 class Tokenizer:
-    def tokenize(self, text: str):
+    def tokenize(self, text: str) -> list[str]:
         tokens = []
         word_buffer = ""
+        
         for char in text:
             if char.isspace():
                 if word_buffer != "":
