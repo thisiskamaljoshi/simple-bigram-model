@@ -5,10 +5,9 @@ class Generator:
     Generate next word
     '''
     def generate(self, bigram_probabilities, current_word) -> str | None:
-        probabiistic_sampler = Sampler()
+        probabilistic_sampler = Sampler()
         if current_word in bigram_probabilities:
-            sampled_word = probabiistic_sampler.sample(bigram_probabilities[current_word])
-            return sampled_word
+            return probabilistic_sampler.sample(bigram_probabilities[current_word])
         else:
             return None
 
