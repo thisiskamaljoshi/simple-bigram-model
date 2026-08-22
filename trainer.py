@@ -3,7 +3,7 @@ class Trainer:
     Scans the processed token sequence, finds every pair of adjacent
     tokens, and counts how often each token is followed by another token.
     '''
-    def train(tokens: list[str]) -> dict[str, dict[str, int]]:
+    def train(self,tokens: list[str]) -> dict[str, dict[str, int]]:
         bigram_dict = {}
 
         for i,token in enumerate(tokens):
