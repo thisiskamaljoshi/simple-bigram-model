@@ -11,7 +11,7 @@ class BigramModel:
             for next_word in bigram_count[word]:
                 count = count + bigram_count[word][next_word]
             for next_word in bigram_count[word]:
-                bigram_probabilities[word][next_word] = a = round( bigram_count[word][next_word]/ count ,2)
+                bigram_probabilities[word][next_word] = bigram_count[word][next_word]/ count
 
         return bigram_probabilities
             
