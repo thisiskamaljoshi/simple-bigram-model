@@ -1,16 +1,14 @@
+from sampler import Sampler
+
 class Generator:
     '''
     Generate next word
     '''
     def generate(self, bigram_probabilities, current_word) -> str | None:
+        probabiistic_sampler = Sampler()
         if current_word in bigram_probabilities:
-            max_probability = 0
-            max_probability_word = ''
-            for next_word in bigram_probabilities[current_word]:
-                if(bigram_probabilities[current_word][next_word] > max_probability):
-                    max_probability = bigram_probabilities[current_word][next_word]
-                    max_probability_word = next_word
-            return max_probability_word
+            sampled_word = probabiistic_sampler.sample(bigram_probabilities[current_word])
+            return sampled_word
         else:
             return None
 
