@@ -13,7 +13,7 @@ def main():
     bigram_model = BigramModel()
     generate = Generator()
 
-    text = corpus.load("corpus.txt")
+    text = corpus.load("dataset/tinystories/tinystories_50mb.txt")
     tokens = tokenizer.tokenize(text)
     processed_tokens = sentence_processor.process(tokens)
     trained_model = model_trainer.train(processed_tokens)
@@ -21,7 +21,6 @@ def main():
 
     generated_output = generate.generate_sentence(bigram_probabilities)
 
-    print("Corpus:")
     print(generated_output)
 
 
