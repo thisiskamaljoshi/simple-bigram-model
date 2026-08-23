@@ -3,16 +3,19 @@ CORPORA = {
         "dataset_name": "roneneldan/TinyStories",
         "split": "train",
         "target_size_mb": 50,
-        "output_file": "dataset/tinystories/tinystories_50mb.txt"
+        "train_output_file": "dataset/tinystories/tinystories_50mb_train.txt",
+        "test_output_file": "dataset/tinystories/tinystories_50mb_test.txt",
     },
 
     "tinystories_100mb": {
         "dataset_name": "roneneldan/TinyStories",
         "split": "train",
         "target_size_mb": 100,
-        "output_file": "dataset/tinystories/tinystories_100mb.txt"
-    }
+        "train_output_file": "dataset/tinystories/tinystories_100mb_train.txt",
+        "test_output_file": "dataset/tinystories/tinystories_100mb_test.txt",
+    },
 }
 
-CORPUS_PATH = "dataset/tinystories/tinystories_50mb.txt"
+TRAIN_CORPUS_PATH = CORPORA["tinystories_50mb"]["train_output_file"]
+TEST_CORPUS_PATH = CORPORA["tinystories_50mb"]["test_output_file"]
 MODEL_PATH = "models/tinystories_50mb_bigrams.json"

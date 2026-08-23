@@ -6,18 +6,19 @@ This is a learning project, not a modern large language model. Its purpose is to
 
 ## How it works
 
-1. Download a text corpus from TinyStories.
-2. Split the corpus into words and punctuation tokens.
-3. Mark sentence beginnings and endings with `<START>` and `<END>` tokens.
-4. Count adjacent word pairs (bigrams), such as `the -> cat`.
-5. Convert counts into conditional next-word probabilities.
-6. Generate a sentence by repeatedly sampling the next word from the probability map.
+1. Stream complete stories from TinyStories.
+2. Assign each story deterministically to an 80% training or 20% test corpus.
+3. Split the training corpus into words and punctuation tokens.
+4. Mark sentence beginnings and endings with `<START>` and `<END>` tokens.
+5. Count adjacent word pairs (bigrams), such as `the -> cat`.
+6. Convert counts into conditional next-word probabilities.
+7. Generate a sentence by repeatedly sampling the next word from the probability map.
 
 The trained probability map is saved as JSON, so generation does not need to retrain on the corpus every time.
 
 ## Features
 
-- Streams and saves a 50 MB TinyStories training corpus
+- Streams a 50 MB TinyStories corpus and creates a deterministic 80/20 story split
 - Tokenizes text and preserves sentence boundaries
 - Trains a word-level bigram probability model
 - Saves trained probabilities to a reusable JSON model file
@@ -43,13 +44,13 @@ python -m pip install --use-feature=truststore -r requirements.txt
 
 ## Usage
 
-Download the configured TinyStories corpus. This is only needed once unless you remove the dataset file.
+Download the configured 50 MB TinyStories corpus. It creates approximately 40 MB of training data and 10 MB of held-out test data. This is only needed once unless you remove either split file.
 
 ```powershell
 python download_corpus.py
 ```
 
-Train the model. This reads the corpus and saves the learned probability map to `models/tinystories_50mb_bigrams.json`.
+Train the model. This reads only the training corpus and saves the learned probability map to `models/tinystories_50mb_bigrams.json`.
 
 ```powershell
 python main.py train

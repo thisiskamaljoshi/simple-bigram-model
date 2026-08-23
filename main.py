@@ -8,7 +8,7 @@ from trainer import Trainer
 from bigram import BigramModel
 from generator import Generator
 from serializer import Serializer
-from config import CORPUS_PATH,MODEL_PATH
+from config import MODEL_PATH, TRAIN_CORPUS_PATH
 
 def train_model() -> None:
     corpus = Corpus()
@@ -18,7 +18,7 @@ def train_model() -> None:
     bigram_model = BigramModel()
     serializer = Serializer()
 
-    text = corpus.load(CORPUS_PATH)
+    text = corpus.load(TRAIN_CORPUS_PATH)
     tokens = tokenizer.tokenize(text)
     processed_tokens = sentence_processor.process(tokens)
     trained_model = model_trainer.train(processed_tokens)
