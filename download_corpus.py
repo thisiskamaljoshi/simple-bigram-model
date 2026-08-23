@@ -1,6 +1,6 @@
 import os
 from datasets import load_dataset
-from corpus_config import CORPORA
+from config import CORPORA
 
 
 class CorpusDownloader:

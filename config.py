@@ -13,3 +13,6 @@ CORPORA = {
         "output_file": "dataset/tinystories/tinystories_100mb.txt"
     }
 }
+
+CORPUS_PATH = "dataset/tinystories/tinystories_50mb.txt"
+MODEL_PATH = "models/tinystories_50mb_bigrams.json"
