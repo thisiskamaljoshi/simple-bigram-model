@@ -1,4 +1,5 @@
 from sampler import Sampler
+from detokenizer import Detokenizer
 
 class Generator:
     '''
@@ -12,16 +13,22 @@ class Generator:
             return None
 
     def generate_sentence(self, bigram_probabilities) -> str:
-        generated_sentence = ''
+
+        generated_tokens = []
         current_word = '<START>'
+        detokenize = Detokenizer()
+
         for i in range(0,100):
             generated_word =  self.generate(bigram_probabilities, current_word)
             if generated_word == None:
                 break
             if generated_word == '<END>':
                 break
-            generated_sentence = generated_sentence + " " + generated_word
+            generated_tokens.append(generated_word)
             current_word = generated_word
-        return generated_sentence
+
+        detokenized_sentence = detokenize.process(generated_tokens)
+        
+        return detokenized_sentence
             
 

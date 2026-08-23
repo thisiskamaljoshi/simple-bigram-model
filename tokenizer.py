@@ -1,6 +1,4 @@
-import string
-
-PUNCTUATION = set(string.punctuation)
+from helpers import PUNCTUATION
 
 class Tokenizer:
     def tokenize(self, text: str) -> list[str]:
