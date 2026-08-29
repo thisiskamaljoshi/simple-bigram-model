@@ -1,32 +1,76 @@
 # Statistical Bigram Language Model
 
-A small language model built from scratch in Python. It learns which words tend to follow one another in the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset, then generates text by sampling from those learned probabilities.
+A modular statistical language model built from scratch in Python. It learns word transition probabilities from the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset, generates text by probabilistic sampling, and provides an evaluation suite to measure test coverage, log-likelihood, and perplexity.
 
-This is a learning project, not a modern large language model. Its purpose is to make the core ideas behind statistical language modelling tangible: learn patterns from text, estimate probabilities, and predict what comes next.
+This project demonstrates core concepts in Natural Language Processing (NLP) and statistical language modeling: text preprocessing, tokenization, vocabulary construction, Maximum Likelihood Estimation (MLE), autoregressive sampling, punctuation-aware detokenization, and intrinsic model evaluation.
 
-## How it works
+---
 
-1. Stream complete stories from TinyStories.
-2. Assign each story deterministically to an 80% training or 20% test corpus.
-3. Split the training corpus into words and punctuation tokens.
-4. Mark sentence beginnings and endings with `<START>` and `<END>` tokens.
-5. Count adjacent word pairs (bigrams), such as `the -> cat`.
-6. Convert counts into conditional next-word probabilities.
-7. Generate a sentence by repeatedly sampling the next word from the probability map.
+## Pipeline Overview
 
-The trained probability map is saved as JSON, so generation does not need to retrain on the corpus every time.
+```mermaid
+flowchart TD
+    subgraph Data_Preparation ["Data Preparation"]
+        HF["TinyStories Dataset"] -->|Stream & SHA256 Split| DC["download_corpus.py"]
+        DC --> TrainTxt["Train Corpus: 80%"]
+        DC --> TestTxt["Test Corpus: 20%"]
+    end
+
+    subgraph Training_Pipeline ["Training Pipeline"]
+        TrainTxt --> CorpusLoad["corpus.py"]
+        CorpusLoad --> Tokenize["tokenizer.py"]
+        Tokenize --> SentProc["sentenceprocessor.py<br/>Add START / END"]
+        SentProc --> Trainer["trainer.py<br/>Count Bigram Pairs"]
+        Trainer --> Bigram["bigram.py<br/>Calculate P(w_i | w_i-1)"]
+        Bigram --> Serializer["serializer.py<br/>Save to JSON"]
+        Serializer --> ModelFile[("models/tinystories_50mb_bigrams.json")]
+    end
+
+    subgraph Generation_Pipeline ["Generation Pipeline"]
+        ModelFile --> LoadGen["serializer.py"]
+        LoadGen --> Sampler["sampler.py<br/>Probabilistic Sampling"]
+        Sampler --> Generator["generator.py<br/>Generate Tokens"]
+        Generator --> Detokenizer["detokenizer.py<br/>Format Spacing"]
+        Detokenizer --> GenText["Generated Sentence"]
+    end
+
+    subgraph Evaluation_Pipeline ["Evaluation Pipeline"]
+        ModelFile --> LoadEval["serializer.py"]
+        TestTxt --> TestLoad["corpus.py"]
+        TestLoad --> TestTok["tokenizer.py & sentenceprocessor.py"]
+        LoadEval --> Evaluator["evaluator.py"]
+        TestTok --> Evaluator
+        Evaluator --> Metrics["Coverage, Log-Prob, Perplexity Report"]
+    end
+```
+
+---
 
 ## Features
 
-- Streams a 50 MB TinyStories corpus and creates a deterministic 80/20 story split
-- Tokenizes text and preserves sentence boundaries
-- Trains a word-level bigram probability model
-- Saves trained probabilities to a reusable JSON model file
-- Generates a new sentence each time through probabilistic sampling
+- **Streaming Dataset Downloader**: Streams TinyStories and creates a deterministic 80/20 train/test split using SHA-256 story hashing.
+- **Custom Tokenization**: Splits words while isolating punctuation marks.
+- **Sentence Boundary Handling**: Automatically wraps sentences with `<START>` and `<END>` tokens for natural beginnings and terminations.
+- **Maximum Likelihood Estimation (MLE)**: Computes bigram conditional transition probabilities:
+  $$P(w_i \mid w_{i-1}) = \frac{\text{Count}(w_{i-1}, w_i)}{\sum_{w'} \text{Count}(w_{i-1}, w')}$$
+- **Model Serialization & Validation**: Saves trained probability distributions as compact JSON, with schema and probability distribution validation.
+- **Probabilistic Sampling**: Employs inverse transform (roulette wheel) sampling to generate diverse text based on learned distributions.
+- **Punctuation-Aware Detokenization**: Reconstructs natural sentences with custom rules for spaces before, after, and around punctuation marks.
+- **Evaluation Suite**:
+  - Validates probability distributions ($\sum P = 1.0$).
+  - Measures vocabulary size and unique learned bigrams.
+  - Computes test set bigram coverage (seen vs. unseen bigrams).
+  - Calculates total and average log-probabilities and perplexity.
+
+---
 
 ## Setup
 
-Requirements: Python 3.11 or newer and an internet connection for downloading dependencies and the corpus.
+### Prerequisites
+- Python 3.11 or newer
+- Internet connection (for downloading dependencies and dataset)
+
+### Installation
 
 ```powershell
 git clone <your-repository-url>
@@ -36,60 +80,116 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-If your network uses a custom Windows certificate and pip reports an SSL verification error, retry the final command with:
+If your network uses a custom Windows certificate and `pip` reports an SSL verification error:
 
 ```powershell
 python -m pip install --use-feature=truststore -r requirements.txt
 ```
 
+---
+
 ## Usage
 
-Download the configured 50 MB TinyStories corpus. It creates approximately 40 MB of training data and 10 MB of held-out test data. This is only needed once unless you remove either split file.
+The project provides a unified CLI via `main.py` with three subcommands: `train`, `generate`, and `evaluate`.
+
+### 1. Download Corpus
+Downloads the configured 50 MB TinyStories corpus and creates the 80% train and 20% test splits in `dataset/tinystories/`:
 
 ```powershell
 python download_corpus.py
 ```
 
-Train the model. This reads only the training corpus and saves the learned probability map to `models/tinystories_50mb_bigrams.json`.
+### 2. Train the Model
+Reads the training split, counts bigram transitions, computes conditional probabilities, and saves the model to `models/tinystories_50mb_bigrams.json`:
 
 ```powershell
 python main.py train
 ```
 
-Generate text from the saved model. This does **not** read the corpus or retrain the model.
+### 3. Generate Text
+Loads the saved model and generates a sentence starting from `<START>` until `<END>` or the 100-token limit:
 
 ```powershell
 python main.py generate
 ```
 
-Example output:
-
+*Example Output:*
 ```text
-He eagerly walked until he kept jogging again.
+One day was selfish.
 ```
 
-Output varies each time because the next word is sampled randomly from the model's learned probabilities.
+### 4. Evaluate the Model
+Evaluates the trained model against the held-out test corpus:
 
-## Project structure
-
-```text
-main.py                 Train the model or generate text
-download_corpus.py      Download and save the TinyStories corpus
-config.py               Corpus and saved-model paths
-tokenizer.py            Convert text into tokens
-sentenceprocessor.py    Add sentence boundary markers
-trainer.py              Count word-pair occurrences
-bigram.py               Convert counts into probabilities
-serializer.py           Save and load the model as JSON
-generator.py            Sample words to generate a sentence
+```powershell
+python main.py evaluate
 ```
 
-## Limitations
+*Example Output:*
+```text
+===== Bigram Model Evaluation =====
+Vocabulary size: 17369
+Unique learned bigrams: 436640
+Evaluated bigrams: 2910351
+Seen bigrams: 2849001
+Unseen bigrams: 61350
+Coverage: 97.89%
+Total log probability: -inf
+Average log probability: -inf
+Perplexity: inf
+```
 
-A bigram model chooses the next word using only the immediately preceding word. It cannot maintain long-range context, reliably follow grammar, or understand meaning across a sentence. As a result, some generated sentences will be awkward or incoherent.
+---
 
-Increasing the corpus size can improve common word transitions, but it does not remove the fundamental bigram limitation. Useful next experiments include a larger TinyStories corpus, trigram models, and neural language models.
+## Evaluation Metrics Explained
 
-## Data and generated files
+- **Vocabulary Size**: Number of unique tokens across the training distribution.
+- **Unique Learned Bigrams**: Number of distinct $(w_{i-1}, w_i)$ pairs observed during training.
+- **Evaluated Bigrams**: Total bigram count in the test corpus.
+- **Seen vs. Unseen Bigrams**: Counts how many test bigrams were learned during training vs. completely new word transitions.
+- **Coverage**: The percentage of test bigrams present in the trained model ($\frac{\text{Seen Bigrams}}{\text{Evaluated Bigrams}}$).
+- **Log Probability & Perplexity**:
+  $$\text{Log Probability} = \sum_{i=1}^{N} \ln P(w_i \mid w_{i-1})$$
+  $$\text{Perplexity} = \exp\left(-\frac{1}{N} \sum_{i=1}^{N} \ln P(w_i \mid w_{i-1})\right)$$
+  > [!NOTE]
+  > Because raw MLE bigram models do not apply smoothing (such as Laplace or Kneser-Ney), any unseen test bigram has $P(w_i \mid w_{i-1}) = 0$. This correctly results in a log-probability of $-\infty$ and perplexity of $\infty$, highlighting the zero-frequency problem in unsmoothed n-gram models.
 
-The corpus in `dataset/`, saved models in `models/`, and the `.venv/` environment are intentionally ignored by Git. They can be recreated using the commands above and should not be committed to the repository.
+---
+
+## Project Structure
+
+| File | Description |
+| :--- | :--- |
+| `main.py` | CLI entry point supporting `train`, `generate`, and `evaluate` commands |
+| `config.py` | Dataset definitions, file paths, and target split sizes |
+| `download_corpus.py` | Streams TinyStories and creates deterministic 80/20 train/test splits |
+| `corpus.py` | File loader utility with validation and UTF-8 handling |
+| `tokenizer.py` | Splits text into words while isolating punctuation marks |
+| `sentenceprocessor.py` | Adds sentence boundary tokens (`<START>` and `<END>`) |
+| `vocabulary.py` | Extracts unique token vocabulary sets |
+| `trainer.py` | Counts adjacent token pair frequencies across the corpus |
+| `bigram.py` | Computes conditional probabilities $P(w_i \mid w_{i-1})$ |
+| `serializer.py` | Serializes and loads probability maps to/from validated JSON |
+| `sampler.py` | Probabilistic sampling using cumulative distributions |
+| `generator.py` | Autoregressively generates sentences using the learned model |
+| `detokenizer.py` | Reassembles tokens into natural, properly spaced text |
+| `helpers.py` | Punctuation sets and spacing attachment rules |
+| `evaluator.py` | Validates probability axioms and calculates coverage, log-prob, and perplexity |
+
+---
+
+## Limitations and Future Experiments
+
+1. **Context Window (First-Order Markov Property)**: Bigram models predict the next word using *only* the single preceding word ($n=2$). They cannot maintain long-term context or complex grammatical agreement.
+2. **Zero-Frequency Problem**: Unseen word transitions have zero probability. Implementing smoothing techniques (e.g., Laplace Add-1, Good-Turing, or Kneser-Ney smoothing) will enable finite perplexity scores on unseen text.
+3. **Future Experiments**:
+   - **Higher-order N-grams**: Trigram ($n=3$) and 4-gram models with backoff or interpolation.
+   - **Smoothing Techniques**: Additive smoothing and backoff to unigram probabilities.
+   - **Subword Tokenization**: Byte-Pair Encoding (BPE) or WordPiece tokenizers.
+   - **Neural Language Models**: Transitioning to MLP / RNN / Transformer architectures.
+
+---
+
+## Data and Generated Files
+
+The corpus split files in `dataset/`, serialized model files in `models/`, and `.venv/` virtual environment are excluded by `.gitignore`. They can be recreated at any time using the commands documented above.
