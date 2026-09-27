@@ -77,8 +77,7 @@ simple-bigram-model/
 ├── sampler.py           # Probabilistic roulette-wheel sampler
 ├── sentenceprocessor.py # Boundary tokens (<START> / <END>)
 ├── serializer.py        # Model JSON serializer and schema validator
-├── tokenizer.py         # Character-level punctuation-isolating tokenizer
-└── vocabulary.py        # Vocabulary set builder
+└── tokenizer.py         # Character-level punctuation-isolating tokenizer
 ```
 
 ---

@@ -53,7 +53,7 @@ def evaluate_model()->None:
     test_corpus_path = Path(TEST_CORPUS_PATH)
     if not test_corpus_path.exists():
         print(f"No saved test corpus found at: {TEST_CORPUS_PATH}")
-        print("Generate a test corpus first with: python main.py train")
+        print("Generate a test corpus first with: python download_corpus.py")
         return
 
     serializer = Serializer()

@@ -169,7 +169,6 @@ Perplexity: inf
 | `corpus.py` | File loader utility with validation and UTF-8 handling |
 | `tokenizer.py` | Splits text into words while isolating punctuation marks |
 | `sentenceprocessor.py` | Adds sentence boundary tokens (`<START>` and `<END>`) |
-| `vocabulary.py` | Extracts unique token vocabulary sets |
 | `trainer.py` | Counts adjacent token pair frequencies across the corpus |
 | `bigram.py` | Computes conditional probabilities $P(w_i \mid w_{i-1})$ |
 | `serializer.py` | Serializes and loads probability maps to/from validated JSON |
