@@ -16,6 +16,8 @@ CORPORA = {
     },
 }
 
-TRAIN_CORPUS_PATH = CORPORA["tinystories_50mb"]["train_output_file"]
-TEST_CORPUS_PATH = CORPORA["tinystories_50mb"]["test_output_file"]
-MODEL_PATH = "models/tinystories_50mb_bigrams.json"
+ACTIVE_CORPUS = "tinystories_50mb"
+
+TRAIN_CORPUS_PATH = CORPORA[ACTIVE_CORPUS]["train_output_file"]
+TEST_CORPUS_PATH = CORPORA[ACTIVE_CORPUS]["test_output_file"]
+MODEL_PATH = f"models/{ACTIVE_CORPUS}_bigrams.json"

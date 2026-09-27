@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 from datasets import load_dataset
-from config import CORPORA
+from config import ACTIVE_CORPUS, CORPORA
 
 
 class CorpusDownloader:
@@ -110,5 +110,7 @@ class CorpusDownloader:
         self._print_split_summary(train_path, test_path, train_stories, test_stories)
 
 if __name__ == "__main__":
+    import sys
+    target_corpus = sys.argv[1] if len(sys.argv) > 1 else ACTIVE_CORPUS
     downloader = CorpusDownloader()
-    downloader.download("tinystories_50mb")
+    downloader.download(target_corpus)
