@@ -1,5 +1,8 @@
 # Statistical Bigram Language Model
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+
 A modular statistical language model built from scratch in Python. It learns word transition probabilities from the [TinyStories](https://huggingface.co/datasets/roneneldan/TinyStories) dataset, generates text by probabilistic sampling, and provides an evaluation suite to measure test coverage, log-likelihood, and perplexity.
 
 This project demonstrates core concepts in Natural Language Processing (NLP) and statistical language modeling: text preprocessing, tokenization, vocabulary construction, Maximum Likelihood Estimation (MLE), autoregressive sampling, punctuation-aware detokenization, and intrinsic model evaluation.
@@ -193,3 +196,16 @@ Perplexity: inf
 ## Data and Generated Files
 
 The corpus split files in `dataset/`, serialized model files in `models/`, and `.venv/` virtual environment are excluded by `.gitignore`. They can be recreated at any time using the commands documented above.
+
+---
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome! Please check out the [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
+
+---
+
+## License
+
+This project is open-source and licensed under the [MIT License](LICENSE).
+
