@@ -246,6 +246,8 @@ Once generated, open `htmlcov/index.html` in your web browser.
 | File / Directory | Description |
 | :--- | :--- |
 | `notebooks/demo.ipynb` | Interactive walkthrough & Colab demo with embedded fairy tales mini-corpus |
+| `CHANGELOG.md` | Version history and release notes following Keep a Changelog standard |
+| `SECURITY.md` | Security policy, supported versions, and vulnerability reporting process |
 | `docs/` | Comprehensive technical articles, talk plans, and refactoring roadmap |
 | `tests/` | Automated unit test suite run with `pytest` |
 | `main.py` | CLI entry point supporting `train`, `generate`, and `evaluate` commands |
@@ -289,7 +291,20 @@ Contributions, issues, and feature requests are welcome! Please check out the [C
 
 ---
 
+## Security
+
+Please review our [Security Policy](SECURITY.md) for supported versions and vulnerability reporting guidelines.
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for the full record of changes, architectural additions, bug fixes, and release notes.
+
+---
+
 ## License
 
 This project is open-source and licensed under the [MIT License](LICENSE).
+
 
