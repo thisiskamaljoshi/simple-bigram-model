@@ -12,7 +12,7 @@ class Serializer:
         with path.open("w", encoding="utf-8") as file:
             json.dump(model, file, ensure_ascii=False, separators=(",", ":"))
 
-    def load(self, file_path: str) -> dict[str, dict[str, float]]:
+    def load(self, file_path: str, validate: bool = True) -> dict[str, dict[str, float]]:
         path = Path(file_path)
 
         with path.open("r", encoding="utf-8") as file:
@@ -21,15 +21,17 @@ class Serializer:
         if not isinstance(model, dict):
             raise ValueError("Saved model must contain a probability map.")
 
-        for word, transitions in model.items():
-            if not isinstance(word, str) or not isinstance(transitions, dict):
-                raise ValueError("Saved model has an invalid probability map structure.")
-            if any(
-                not isinstance(next_word, str)
-                or isinstance(probability, bool)
-                or not isinstance(probability, (int, float))
-                for next_word, probability in transitions.items()
-            ):
-                raise ValueError("Saved model contains invalid transition probabilities.")
+        if validate:
+            for word, transitions in model.items():
+                if not isinstance(word, str) or not isinstance(transitions, dict):
+                    raise ValueError("Saved model has an invalid probability map structure.")
+                if any(
+                    not isinstance(next_word, str)
+                    or isinstance(probability, bool)
+                    or not isinstance(probability, (int, float))
+                    for next_word, probability in transitions.items()
+                ):
+                    raise ValueError("Saved model contains invalid transition probabilities.")
 
         return model
+

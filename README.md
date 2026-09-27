@@ -110,10 +110,23 @@ python main.py train
 ```
 
 ### 3. Generate Text
-Loads the saved model and generates a sentence starting from `<START>` until `<END>` or the 100-token limit:
+Loads the saved model and generates a sentence starting from `<START>` until `<END>` or the token limit:
 
 ```powershell
 python main.py generate
+```
+
+#### Optional Generation Flags:
+- `--temperature`: Sampling temperature. Lower values (e.g. `0.2` or `0.0001`) produce greedy/deterministic text; higher values (e.g. `1.2`) produce more random text. Default is `1.0`.
+- `--max-tokens`: Maximum number of tokens to generate. Default is `100`.
+- `--seed`: Integer random seed for reproducible outputs.
+
+```powershell
+# Greedy / deterministic generation
+python main.py generate --temperature 0.001
+
+# Reproducible sampling with seed and max length
+python main.py generate --temperature 0.8 --max-tokens 50 --seed 42
 ```
 
 *Example Output:*
