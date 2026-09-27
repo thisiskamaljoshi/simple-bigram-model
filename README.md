@@ -1,5 +1,6 @@
 # Statistical Bigram Language Model
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thisiskamaljoshi/simple-bigram-model/blob/main/notebooks/demo.ipynb)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
@@ -105,9 +106,23 @@ python -m pip install --use-feature=truststore -r requirements.txt
 
 ## Usage
 
-The project provides a unified CLI via the `simple-bigram` console script (or `python main.py`) with three subcommands: `train`, `generate`, and `evaluate`.
+The project can be explored interactively in Google Colab or via the unified CLI (`simple-bigram` or `python main.py`).
+
+### 0. Interactive Demo (Google Colab)
+
+Want to try the model immediately without any local setup or file downloads? Run our interactive walkthrough notebook:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thisiskamaljoshi/simple-bigram-model/blob/main/notebooks/demo.ipynb)
+
+The demo notebook [`notebooks/demo.ipynb`](notebooks/demo.ipynb) includes:
+- **Embedded Fairy Tales Mini-Corpus**: Zero-download training in milliseconds.
+- **Tokenization & Sentence Boundaries**: Visualizing punctuation isolation and `<START>` / `<END>` injection.
+- **Transition Matrix Inspection**: Examining conditional counts, probability distributions, and 2D heatmaps.
+- **Temperature Scaling Comparison**: Interactive slider comparing Greedy ($T=0.01$), Balanced ($T=0.7$), and Creative ($T=1.5$) generation.
+- **Intrinsic Evaluation**: Calculating test set coverage, log-likelihood, and perplexity.
 
 ### 1. Download Corpus
+
 Downloads the configured 50 MB TinyStories corpus and creates the 80% train and 20% test splits in `dataset/tinystories/`:
 
 ```powershell
@@ -230,6 +245,7 @@ Once generated, open `htmlcov/index.html` in your web browser.
 
 | File / Directory | Description |
 | :--- | :--- |
+| `notebooks/demo.ipynb` | Interactive walkthrough & Colab demo with embedded fairy tales mini-corpus |
 | `docs/` | Comprehensive technical articles, talk plans, and refactoring roadmap |
 | `tests/` | Automated unit test suite run with `pytest` |
 | `main.py` | CLI entry point supporting `train`, `generate`, and `evaluate` commands |
