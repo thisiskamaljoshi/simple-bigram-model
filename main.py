@@ -87,7 +87,7 @@ def evaluate_model() -> None:
     evaluator.report(metrics)
 
 
-def main() -> None:
+def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
         description="Train, generate text, or evaluate the statistical bigram model."
     )
@@ -121,7 +121,7 @@ def main() -> None:
         help="Custom corpus file path for training.",
     )
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     if args.command == "train":
         train_model(corpus_path=args.corpus)

@@ -86,3 +86,10 @@ def test_evaluate_model_success(tmp_path, capsys, monkeypatch):
     assert "===== Bigram Model Evaluation =====" in captured.out
     assert "Coverage:" in captured.out
 
+
+def test_main_argv_argument():
+    with patch("main.generate_text") as mock_gen:
+        main(["generate", "--temperature", "0.2"])
+        mock_gen.assert_called_once_with(temperature=0.2, max_tokens=100, seed=None)
+
+
