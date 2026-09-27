@@ -89,6 +89,12 @@ To install development and testing dependencies (`pytest`, `pytest-cov`):
 python -m pip install -r requirements-dev.txt
 ```
 
+To install the project as an editable CLI tool (enables the `simple-bigram` command):
+
+```powershell
+python -m pip install -e .
+```
+
 If your network uses a custom Windows certificate and `pip` reports an SSL verification error:
 
 ```powershell
@@ -99,7 +105,7 @@ python -m pip install --use-feature=truststore -r requirements.txt
 
 ## Usage
 
-The project provides a unified CLI via `main.py` with three subcommands: `train`, `generate`, and `evaluate`.
+The project provides a unified CLI via the `simple-bigram` console script (or `python main.py`) with three subcommands: `train`, `generate`, and `evaluate`.
 
 ### 1. Download Corpus
 Downloads the configured 50 MB TinyStories corpus and creates the 80% train and 20% test splits in `dataset/tinystories/`:
