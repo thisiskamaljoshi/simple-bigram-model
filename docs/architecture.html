@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture Diagram | Statistical Bigram Language Model</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(17, 24, 39, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --cyan: #06b6d4;
+      --emerald: #10b981;
+      --violet: #8b5cf6;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --blue: #3b82f6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      width: 100%;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.25);
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    .header p {
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 750px;
+      margin: 0 auto;
+    }
+
+    .badges {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+    }
+    .pill.green { color: var(--emerald); border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.08); }
+    .pill.purple { color: var(--violet); border-color: rgba(139, 92, 246, 0.3); background: rgba(139, 92, 246, 0.08); }
+
+    /* Pipeline Grid */
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      position: relative;
+    }
+
+    @media (max-width: 1200px) {
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stage-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stage-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .stage-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 24px;
+      right: 24px;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+    }
+
+    .stage-1::before { background: var(--cyan); }
+    .stage-2::before { background: var(--emerald); }
+    .stage-3::before { background: var(--violet); }
+    .stage-4::before { background: var(--blue); }
+    .stage-5::before { background: var(--rose); }
+
+    .stage-number {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .stage-1 .stage-number { color: var(--cyan); }
+    .stage-2 .stage-number { color: var(--emerald); }
+    .stage-3 .stage-number { color: var(--violet); }
+    .stage-4 .stage-number { color: var(--blue); }
+    .stage-5 .stage-number { color: var(--rose); }
+
+    .stage-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .node-box {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .node-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .node-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .file-tag {
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #93c5fd;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .feature-list li::before {
+      content: "•";
+      color: var(--text-muted);
+      font-weight: bold;
+    }
+
+    .formula-box {
+      background: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: 'SF Mono', Consolas, monospace;
+      font-size: 11px;
+      color: #ddd6fe;
+      text-align: center;
+      margin: 8px 0;
+    }
+
+    /* Connectors for desktop */
+    .arrow-divider {
+      display: none;
+    }
+
+    /* Action Bar */
+    .action-bar {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="captureArea">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-badge">First-Principles Machine Learning</div>
+      <h1>Statistical Bigram Language Model Architecture</h1>
+      <p>A modular autoregressive next-token prediction pipeline built from scratch in pure Python with zero external machine learning dependencies.</p>
+      
+      <div class="badges">
+        <span class="pill green">✓ 70 Pytest Unit Tests</span>
+        <span class="pill green">✓ 97.3% Code Coverage</span>
+        <span class="pill purple">Zero Frameworks (No PyTorch / HuggingFace)</span>
+        <span class="pill">Hugging Face TinyStories</span>
+      </div>
+    </div>
+
+    <!-- Pipeline Grid -->
+    <div class="pipeline">
+
+      <!-- Stage 1 -->
+      <div class="stage-card stage-1">
+        <span class="stage-number">Stage 01</span>
+        <h2 class="stage-title">Data Ingestion & Hashing</h2>
+        
+        <div class="node-box">
+          <div class="node-label">Module Source</div>
+          <div class="node-value"><span class="file-tag">download_corpus.py</span></div>
+        </div>
+
+        <div class="node-box">
+          <div class="node-label">Splitting Strategy</div>
+          <div class="node-value">SHA-256 Story Bucketing</div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Streams raw text up to byte quota (50 MB or 500 MB).</li>
+          <li>Deterministic 80/20 train/test split at the story level.</li>
+          <li>Prevents train-test leakage across multi-sentence stories.</li>
+          <li>Atomic file rename (<span class="file-tag">.tmp</span>) prevents corruption.</li>
+        </ul>
+      </div>
+
+      <!-- Stage 2 -->
+      <div class="stage-card stage-2">
+        <span class="stage-number">Stage 02</span>
+        <h2 class="stage-title">Tokenization & Boundaries</h2>
+        
+        <div class="node-box">
+          <div class="node-label">Module Source</div>
+          <div class="node-value"><span class="file-tag">tokenizer.py</span> + <span class="file-tag">sentenceprocessor.py</span></div>
+        </div>
+
+        <div class="node-box">
+          <div class="node-label">Special Tokens</div>
+          <div class="node-value">&lt;START&gt; &amp; &lt;END&gt;</div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Custom character buffer separates words and punctuation marks.</li>
+          <li>Injects <span class="file-tag">&lt;START&gt;</span> to model sequence initiation.</li>
+          <li>Injects <span class="file-tag">&lt;END&gt;</span> after period, question mark, and exclamation marks.</li>
+          <li>Demarcates natural sentence terminations.</li>
+        </ul>
+      </div>
+
+      <!-- Stage 3 -->
+      <div class="stage-card stage-3">
+        <span class="stage-number">Stage 03</span>
+        <h2 class="stage-title">MLE Training Engine</h2>
+        
+        <div class="node-box">
+          <div class="node-label">Module Source</div>
+          <div class="node-value"><span class="file-tag">trainer.py</span> + <span class="file-tag">bigram.py</span></div>
+        </div>
+
+        <div class="formula-box">
+          P(w_i | w_{i-1}) = Count(w_{i-1}, w_i) / Σ Count(w_{i-1}, w')
+        </div>
+
+        <ul class="feature-list">
+          <li>Counts frequency of all adjacent bigram pairs in corpus.</li>
+          <li>Applies Maximum Likelihood Estimation (MLE) normalization.</li>
+          <li>Validates probability axioms: Σ P(w | context) = 1.0.</li>
+          <li>Serialized to validated JSON model (<span class="file-tag">serializer.py</span>).</li>
+        </ul>
+      </div>
+
+      <!-- Stage 4 -->
+      <div class="stage-card stage-4">
+        <span class="stage-number">Stage 04</span>
+        <h2 class="stage-title">Autoregressive Generation</h2>
+        
+        <div class="node-box">
+          <div class="node-label">Module Source</div>
+          <div class="node-value"><span class="file-tag">sampler.py</span> + <span class="file-tag">generator.py</span></div>
+        </div>
+
+        <div class="node-box">
+          <div class="node-label">Sampling Controls</div>
+          <div class="node-value">Temperature (T) &amp; Seed</div>
+        </div>
+
+        <ul class="feature-list">
+          <li>Inverse transform (roulette wheel) cumulative sampling.</li>
+          <li>Temperature scaling: Greedy (T=0.01) to Creative (T=1.5).</li>
+          <li>Runs autoregressively from <span class="file-tag">&lt;START&gt;</span> until <span class="file-tag">&lt;END&gt;</span>.</li>
+          <li>Punctuation-aware detokenizer restores natural spacing.</li>
+        </ul>
+      </div>
+
+      <!-- Stage 5 -->
+      <div class="stage-card stage-5">
+        <span class="stage-number">Stage 05</span>
+        <h2 class="stage-title">Intrinsic Evaluation</h2>
+        
+        <div class="node-box">
+          <div class="node-label">Module Source</div>
+          <div class="node-value"><span class="file-tag">evaluator.py</span></div>
+        </div>
+
+        <div class="formula-box">
+          PP = exp(- 1/N * Σ ln P)
+        </div>
+
+        <ul class="feature-list">
+          <li>Measures vocabulary size and unique transition counts.</li>
+          <li>Computes unseen vs. seen test coverage (97.89%).</li>
+          <li>Calculates cross-entropy log-probability across splits.</li>
+          <li>Highlights Zero-Frequency Trap: Unseen pairs give Perplexity = ∞.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Interactive Actions -->
+    <div class="action-bar" id="actionBar">
+      <button class="btn btn-primary" onclick="toggleCleanMode()">📷 Clean Snapshot Mode (For LinkedIn)</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    </div>
+
+    <div class="footer-note" id="footerNote">
+      Simple Bigram Language Model • Built with first principles by Kamal Joshi • github.com/thisiskamaljoshi/simple-bigram-model
+    </div>
+  </div>
+
+  <script>
+    let isClean = false;
+    function toggleCleanMode() {
+      const bar = document.getElementById('actionBar');
+      const note = document.getElementById('footerNote');
+      isClean = !isClean;
+      if (isClean) {
+        bar.style.display = 'none';
+        alert('Clean mode active! Take your screenshot now (Win + Shift + S). Press Escape to bring the buttons back.');
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isClean) {
+        document.getElementById('actionBar').style.display = 'flex';
+        isClean = false;
+      }
+    });
+  </script>
+</body>
+</html>
