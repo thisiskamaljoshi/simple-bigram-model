@@ -79,7 +79,9 @@ omit = [
     "dataset/*",
     "models/*",
     "docs/*",
+    "notebooks/*",
 ]
+
 
 [tool.coverage.report]
 show_missing = true
