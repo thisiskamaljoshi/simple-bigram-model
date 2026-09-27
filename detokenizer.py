@@ -1,23 +1,32 @@
-from helpers import NO_SPACE_BEFORE,NO_SPACE_AFTER,NO_SPACE_AROUND
+from helpers import NO_SPACE_AFTER, NO_SPACE_AROUND, NO_SPACE_BEFORE
+
 
 class Detokenizer:
     '''
     Converts a list of tokens back into readable text.
     '''
     def process(self, tokens: list[str]) -> str:
-        sentence = ''
+        if not tokens:
+            return ""
+
+        output: list[str] = []
         nospaceafter = False
+
         for token in tokens:
-            if token in NO_SPACE_BEFORE or nospaceafter:
-                sentence = sentence + token
+            if not output:
+                output.append(token)
+                if token in NO_SPACE_AFTER or token in NO_SPACE_AROUND:
+                    nospaceafter = True
+            elif token in NO_SPACE_BEFORE or nospaceafter:
+                output.append(token)
                 nospaceafter = False
             elif token in NO_SPACE_AFTER:
-                sentence = sentence + " " + token
+                output.append(" " + token)
                 nospaceafter = True
             elif token in NO_SPACE_AROUND:
-                sentence = sentence + token
+                output.append(token)
                 nospaceafter = True
             else:
-                sentence = sentence + " " + token
+                output.append(" " + token)
 
-        return sentence
+        return "".join(output)
