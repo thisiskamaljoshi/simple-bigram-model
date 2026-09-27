@@ -174,8 +174,10 @@ Perplexity: inf
 
 ## Project Structure
 
-| File | Description |
+| File / Directory | Description |
 | :--- | :--- |
+| `docs/` | Comprehensive technical articles, talk plans, and refactoring roadmap |
+| `tests/` | Automated unit test suite run with `pytest` |
 | `main.py` | CLI entry point supporting `train`, `generate`, and `evaluate` commands |
 | `config.py` | Dataset definitions, file paths, and target split sizes |
 | `download_corpus.py` | Streams TinyStories and creates deterministic 80/20 train/test splits |

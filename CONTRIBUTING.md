@@ -63,6 +63,7 @@ We welcome ideas for improving the project (such as adding smoothing techniques,
 ```text
 simple-bigram-model/
 ├── dataset/             # Corpus data directory (gitignored)
+├── docs/                # Architecture docs, talk plans, and article roadmaps
 ├── models/              # Saved model JSON artifacts (gitignored)
 ├── tests/               # Automated test suite
 ├── bigram.py            # MLE transition probability calculation
