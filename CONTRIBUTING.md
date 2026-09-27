@@ -48,9 +48,13 @@ We welcome ideas for improving the project (such as adding smoothing techniques,
    - Include type hints for function signatures.
    - Add docstrings explaining mathematical logic where applicable.
 5. **Run tests**:
-   Ensure all existing and new tests pass:
+   Ensure all existing and new tests pass, and coverage remains above 90%:
    ```bash
+   # Run tests
    pytest
+
+   # Run tests with terminal coverage report
+   pytest --cov=. --cov-report=term-missing tests/
    ```
 6. **Submit your Pull Request**:
    - Fill out the PR template with details of what was changed and why.
@@ -63,6 +67,7 @@ We welcome ideas for improving the project (such as adding smoothing techniques,
 ```text
 simple-bigram-model/
 ├── dataset/             # Corpus data directory (gitignored)
+├── docs/                # Architecture docs, talk plans, and article roadmaps
 ├── models/              # Saved model JSON artifacts (gitignored)
 ├── tests/               # Automated test suite
 ├── bigram.py            # MLE transition probability calculation

@@ -83,6 +83,12 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
+To install development and testing dependencies (`pytest`, `pytest-cov`):
+
+```powershell
+python -m pip install -r requirements-dev.txt
+```
+
 If your network uses a custom Windows certificate and `pip` reports an SSL verification error:
 
 ```powershell
@@ -157,6 +163,48 @@ Perplexity: inf
 
 ---
 
+## Testing & Code Coverage
+
+The project includes an automated unit test suite (65 tests across 12 test modules) verifying all components, edge cases, and numerical properties, achieving **99% test coverage**.
+
+### 1. Install Testing Dependencies
+If not already installed, install the developer dependencies:
+
+```powershell
+python -m pip install -r requirements-dev.txt
+```
+
+### 2. Run the Test Suite
+Run all tests using `pytest`:
+
+```powershell
+python -m pytest
+```
+
+For verbose output with individual test names and status:
+
+```powershell
+python -m pytest tests/ -v
+```
+
+### 3. Check Test Coverage in Terminal
+Display test coverage with missing line indicators in the terminal:
+
+```powershell
+python -m pytest --cov=. --cov-report=term-missing tests/
+```
+
+### 4. Generate Interactive HTML Coverage Report
+Generate an interactive HTML report to visually explore covered and uncovered lines across all source files:
+
+```powershell
+python -m pytest --cov=. --cov-report=html tests/
+```
+
+Once generated, open `htmlcov/index.html` in your web browser.
+
+---
+
 ## Evaluation Metrics Explained
 
 - **Vocabulary Size**: Number of unique tokens across the training distribution.
@@ -174,8 +222,10 @@ Perplexity: inf
 
 ## Project Structure
 
-| File | Description |
+| File / Directory | Description |
 | :--- | :--- |
+| `docs/` | Comprehensive technical articles, talk plans, and refactoring roadmap |
+| `tests/` | Automated unit test suite run with `pytest` |
 | `main.py` | CLI entry point supporting `train`, `generate`, and `evaluate` commands |
 | `config.py` | Dataset definitions, file paths, and target split sizes |
 | `download_corpus.py` | Streams TinyStories and creates deterministic 80/20 train/test splits |
