@@ -23,7 +23,7 @@ class Sampler:
         probs = list(probabilities.values())
 
         # Greedy / Argmax decoding for temperature near 0
-        if temperature <= 1e-4:
+        if temperature <= 0.05:
             max_idx = probs.index(max(probs))
             return words[max_idx]
 

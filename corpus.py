@@ -11,4 +11,4 @@ class Corpus:
         if not path.exists():
             raise FileNotFoundError(f"Corpus file not found: {file_path}")
 
-        return path.read_text(encoding="utf-8")
+        return path.read_text(encoding="utf-8-sig")

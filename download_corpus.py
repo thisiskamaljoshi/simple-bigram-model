@@ -81,9 +81,7 @@ class CorpusDownloader:
         test_stories = 0
 
         try:
-            with temp_train_path.open("w", encoding="utf-8") as train_file, temp_test_path.open(
-                "w", encoding="utf-8"
-            ) as test_file:
+            with temp_train_path.open("wb") as train_file, temp_test_path.open("wb") as test_file:
                 for item in dataset:
                     story = " ".join(item["text"].split())
                     if not story:
@@ -91,10 +89,10 @@ class CorpusDownloader:
 
                     encoded_story = f"{story}\n".encode("utf-8")
                     if self._is_test_story(story):
-                        test_file.write(encoded_story.decode("utf-8"))
+                        test_file.write(encoded_story)
                         test_stories += 1
                     else:
-                        train_file.write(encoded_story.decode("utf-8"))
+                        train_file.write(encoded_story)
                         train_stories += 1
 
                     written_bytes += len(encoded_story)
