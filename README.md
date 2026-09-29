@@ -186,7 +186,7 @@ Perplexity: inf
 
 ## Testing & Code Coverage
 
-The project includes an automated unit test suite (65 tests across 12 test modules) verifying all components, edge cases, and numerical properties, achieving **99% test coverage**.
+The project includes an automated unit test suite (70 tests across 14 test modules) verifying all components, edge cases, and numerical properties, achieving **97.3% test coverage**.
 
 ### 1. Install Testing Dependencies
 If not already installed, install the developer dependencies:
